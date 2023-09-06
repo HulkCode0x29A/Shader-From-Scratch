@@ -74,8 +74,31 @@ public class LookAt : MonoBehaviour
         Vector3 newCamPos = transMatrix.MultiplyPoint(camPos);
         Vector3 newTargetPos = transMatrix.MultiplyPoint(targetPos);
 
+        Matrix4x4 lookAtMatrix = FMatrix.Lookat(camPos, targetPos, Vector3.up);
+        Vector3 viewSpaceTargetPos = lookAtMatrix.MultiplyPoint(newTargetPos);
+
+      
+        Matrix4x4 viewCoordinateMatrix = Matrix4x4.identity;
+        //set viewX to first column
+        viewCoordinateMatrix[0, 0] = viewX.x;
+        viewCoordinateMatrix[1, 0] = viewX.y;
+        viewCoordinateMatrix[2, 0] = viewX.z;
+        //set viewY to second column
+        viewCoordinateMatrix[0, 1] = viewY.x;
+        viewCoordinateMatrix[1, 1] = viewY.y;
+        viewCoordinateMatrix[2, 1] = viewY.z;
+        //set viewZ to third column
+        viewCoordinateMatrix[0, 2] = viewZ.x;
+        viewCoordinateMatrix[1, 2] = viewZ.y;
+        viewCoordinateMatrix[2, 2] = viewZ.z;
+
+        Matrix4x4 rotateViewCoordinate = lookAtMatrix * viewCoordinateMatrix;
+
         CopyCamera.position = newCamPos;
-        CopyTarget.position = newTargetPos;
+       
+        CopyCamera.forward = -rotateViewCoordinate.GetColumn(2);
+        CopyTarget.position = viewSpaceTargetPos;
+
         Gizmos.color = Color.green;
         FGizmos.DrawFrustum(Left, Right, Bottom, Top, ZNear, ZFar, CopyCamera);
 

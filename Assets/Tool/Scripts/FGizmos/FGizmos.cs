@@ -52,9 +52,6 @@ public class FGizmos
 
     public static void DrawFrustum(float left, float right, float bottom, float top, float zNear, float zFar)
     {
-        //use right hand so  negation z
-        zNear = -zNear;
-        zFar = -zFar;
 
         FrustumData data = GetFrustumData(left, right, bottom, top, zNear, zFar);
         DrawFrustum(data);
@@ -179,18 +176,29 @@ public class FGizmos
     }
 
 
-    public static void DrawWirePolygon(Vector2[] points)
+    
+    public static void DrawWirePolygonWithSphere(Vector3[] points, Color[] colors, Color lineColor , float radius = 0.1f)
     {
-        if (points.Length < 2)
+        if (points.Length < 2 || points.Length != colors.Length)
             return;
+
 
         for (int i = 0; i < points.Length - 1; i++)
         {
+            Gizmos.color = lineColor;
             Gizmos.DrawLine(points[i], points[i + 1]);
+
+            Gizmos.color = colors[i];
+            Gizmos.DrawSphere(points[i], radius);
         }
 
         if (points.Length > 2)
+        {
             Gizmos.DrawLine(points[points.Length - 1], points[0]);
+            Gizmos.color = colors[points.Length - 1];
+            Gizmos.DrawSphere(points[points.Length - 1], radius);
+        }
+            
     }
 
 

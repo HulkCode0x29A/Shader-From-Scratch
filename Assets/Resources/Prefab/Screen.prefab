@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Pixel: {fileID: 3338760724861533000, guid: 00ea0678abf1e5744bf684dfe1138528, type: 3}
-  PixelScale: {x: 1, y: 1, z: 1}
-  Resolution: 50
-  Spacing: 0.1
+  PixelScale: {x: 0.1, y: 0.1, z: 0.1}
+  Resolution: 25
+  Spacing: 0.05
