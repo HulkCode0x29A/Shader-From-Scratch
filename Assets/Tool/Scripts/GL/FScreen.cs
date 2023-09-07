@@ -77,6 +77,7 @@ public class FScreen :MonoBehaviour
         {
             float t = (x - x0) / (float)(x1 - x0);
             int y = (int)(y0 * (1.0f - t) + y1 * t);
+
             Color color = (c0 * (1.0f - t)) + c1 * t;
             if (steep)
                 SetColor(y, x, color);
@@ -84,6 +85,55 @@ public class FScreen :MonoBehaviour
                 SetColor(x, y, color);
         }
 
+    }
+
+
+    public void DrawTriangle(Vector2[] points, ShaderBase shader)
+    {
+        Vector3 p = Vector3.zero;
+        for (p.x =0; p.x < Resolution; p.x++)
+        {
+            for (p.y = 0; p.y < Resolution; p.y++)
+            {
+
+                Vector3 bcCoord = Barycentric(points, p);
+                //determine if the pixel is in a triangle
+                if (bcCoord.x >= 0 && bcCoord.y >= 0 && bcCoord.x + bcCoord.y <= 1)
+                {
+                    //if return ture ignore pxiel
+                    if (shader.Fragment(bcCoord, out Color color))
+                        continue;
+
+                    SetColor((int)p.x, (int)p.y, color);
+                }
+            }
+        }
+    }
+
+    public Vector3 Barycentric(Vector2[] points, Vector2 p)
+    {
+        if (null == points || points.Length != 3)
+        {
+            Debug.LogError("Error data for Barycentric");
+            return Vector3.one;
+        }
+
+        //alculate the area of a triangle using the determinant
+        float area = points[0].x * points[1].y + points[1].x * points[2].y + points[2].x * points[0].y
+        - points[2].x * points[1].y - points[1].x * points[0].y - points[0].x * points[2].y;
+
+        //sub triangle area
+        float subArea0 = p.x * points[1].y + points[1].x * points[2].y + points[2].x * p.y
+        - points[2].x * points[1].y - points[1].x * p.y - p.x * points[2].y;
+
+        float subArea1 = points[0].x * p.y + p.x * points[2].y + points[2].x * points[0].y
+        - points[2].x * p.y - p.x * points[0].y - points[0].x * points[2].y;
+        //calculating barycentric coordinates
+        float alpha = subArea0 / area;
+        float beta = subArea1 / area;
+        float gamma = 1 - alpha - beta;
+
+        return new Vector3(alpha, beta, gamma);
     }
 
     public void DrawTriangle(Vector2[] points, Color[] colors)
@@ -108,7 +158,7 @@ public class FScreen :MonoBehaviour
             for (p.y = boxMin.y; p.y < boxMax.y; p.y++)
             {
 
-                Vector3 bcCoord = FGL.Barycentric(points, p);
+                Vector3 bcCoord = Barycentric(points, p);
                 //determine if the pixel is in a triangle
                 if (bcCoord.x >= 0 && bcCoord.y >= 0 && bcCoord.x + bcCoord.y <= 1)
                 {
