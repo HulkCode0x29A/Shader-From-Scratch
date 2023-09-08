@@ -28,7 +28,7 @@ public class VertexBufferObject
     //this list define hao we map data to shader
     private List<VertexBufferPointer> pointerList = new List<VertexBufferPointer>();
 
-    private ShaderBase cacheShader;
+    private ShaderVertexBase cacheVertexShader;
     //cache current shader fields
     private Dictionary<int, FieldInfo> shaderFieldsDict = new Dictionary<int, FieldInfo>();
 
@@ -58,9 +58,9 @@ public class VertexBufferObject
     /// set up shader fields
     /// </summary>
     /// <param name="shader"></param>
-    public void SetUpShader(ShaderBase shader)
+    public void SetUpShader(ShaderVertexBase shader)
     {
-        this.cacheShader = shader;
+        this.cacheVertexShader = shader;
         shaderFieldsDict.Clear();
 
         FieldInfo[] fields = shader.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -123,7 +123,7 @@ public class VertexBufferObject
             {
                 FieldInfo info = shaderFieldsDict[index];
                 if (info.FieldType == type)
-                    info.SetValue(cacheShader, value);
+                    info.SetValue(cacheVertexShader, value);
                 else
                     Debug.LogError("error type try set :" + type + " to:" + info.FieldType + "  name:" + info.Name + "  size:" + size);
 

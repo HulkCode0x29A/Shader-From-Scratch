@@ -12,29 +12,23 @@ public class Combinedata : MonoBehaviour
     int vboID;
     void Start()
     {
-        TestShader testShader = new TestShader();
+        TestVertexShader vertexShader = new TestVertexShader();
+        TestFragmentShader fragmentShader = new TestFragmentShader();
 
-        //VertexBufferObject vbo = new VertexBufferObject();
-        //vbo.SetBuffers(new List<float>() { 
-        //    -0.5f, 0.5f,0,     
-        //    0.5f,0.5f,0,        
-        //    0,0.5f,0 //a triangle
-        //});
-
-        //vbo.VertexAttribPointer(0, 3, 3, 0);
-
-        // vbo.AnalysisVertexBuffer(testShader);
-
-        shaderID = GL.CreateShader(testShader);
+        shaderID = GL.CreateShader(vertexShader, fragmentShader);
         vboID = GL.GenBuffers();
         GL.BindBuffer(GLBind.GL_ARRAY_BUFFER, vboID);
         GL.BufferData(GLBind.GL_ARRAY_BUFFER, new List<float>() {
-                //position      
-                -0.5f, 0f, 0,     
-                0.5f, 0f, 0,      
-                0, 0.5f, 0,       
+            //position                  //color
+            -0.5f,-0.5f,0,              1,0,0,
+            0.5f,-0.5f,0,               0,1,0,
+            0.5f,0.5f,0,                0,0,1,      //first triangle
+            0.5f,0.5f,0,                0,0,1,
+            -0.5f,0.5f,0,               1,1,0,
+            -0.5f,-0.5f,0               ,0,1,1      //second triangle
         });
-        GL.VertexAttribPointer(0, 3, 3, 0);
+        GL.VertexAttribPointer(0, 3, 6, 0);
+        GL.VertexAttribPointer(1, 3, 6, 3);
 
 
         Matrix4x4 colorMatrix = Matrix4x4.identity;
@@ -49,7 +43,6 @@ public class Combinedata : MonoBehaviour
         int resolution = GL.GetScreenResolution();
         Matrix4x4 matrix = FMatrix.ViewPort(0, resolution - 1, 0, resolution  -1);
         GL.SetMatrix("ViewPort", matrix);
-        GL.SetMatrix("Color", colorMatrix);
     }
 
     private void OnDrawGizmos()
@@ -62,7 +55,7 @@ public class Combinedata : MonoBehaviour
         GL.UseProgram(shaderID);
 
         GL.BindBuffer(GLBind.GL_ARRAY_BUFFER, vboID);
-        GL.DrawArrays(GLDraw.GL_TRIANGLES, 0, 3);
+        GL.DrawArrays(GLDraw.GL_TRIANGLES, 6);
     }
 
 }

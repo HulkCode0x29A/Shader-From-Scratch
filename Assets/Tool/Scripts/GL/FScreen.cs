@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 public class FScreen :MonoBehaviour
@@ -88,7 +89,7 @@ public class FScreen :MonoBehaviour
     }
 
 
-    public void DrawTriangle(Vector2[] points, ShaderBase shader)
+    public void DrawTriangle(Vector2[] points,ShaderLinkData data, ShaderFragmentBase fragment)
     {
         Vector3 p = Vector3.zero;
         for (p.x =0; p.x < Resolution; p.x++)
@@ -100,13 +101,35 @@ public class FScreen :MonoBehaviour
                 //determine if the pixel is in a triangle
                 if (bcCoord.x >= 0 && bcCoord.y >= 0 && bcCoord.x + bcCoord.y <= 1)
                 {
+                    LinkShaderData(bcCoord, data, fragment);
                     //if return ture ignore pxiel
-                    if (shader.Fragment(bcCoord, out Color color))
+                    if (fragment.Fragment(bcCoord, out Color color))
                         continue;
 
                     SetColor((int)p.x, (int)p.y, color);
                 }
             }
+        }
+    }
+
+    private void LinkShaderData(Vector3 bcCoord, ShaderLinkData data,ShaderFragmentBase fragment)
+    {
+        FieldInfo[] fields = fragment.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        Dictionary<string, FieldInfo> fieldsDict = new Dictionary<string, FieldInfo>();
+        for (int i = 0; i < fields.Length; i++)
+        {
+            fieldsDict.Add(fields[i].Name, fields[i]);
+        }
+        foreach (var v3 in data.Vector3Datas)
+        {
+            string fieldName = v3.Key;
+            Vector3[] values = v3.Value;
+            if (!fieldsDict.ContainsKey(fieldName))
+                continue;
+
+            Vector3 interpData = bcCoord.x * values[0] + bcCoord.y * values[1] + bcCoord.z * values[2];
+            FieldInfo fieldInfo = fieldsDict[fieldName];
+            fieldInfo.SetValue(fragment, interpData);
         }
     }
 

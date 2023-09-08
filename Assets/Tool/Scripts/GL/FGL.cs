@@ -29,6 +29,20 @@ public enum GLDraw
     GL_TRIANGLES
 }
 
+public class ShaderLinkData
+{
+    public Vector4[] GLPosition = new Vector4[3];
+
+    public Dictionary<string, float[]> Floats { get; set; } = new Dictionary<string, float[]>();
+
+    //public Dictionary<string, Vector2> Vector2Datas { get; set; } = new Dictionary<string, Vector2>();
+
+    public Dictionary<string, Vector3[]> Vector3Datas { get; set; } = new Dictionary<string, Vector3[]>();
+
+    //public Dictionary<string, Vector4> Vector4Datas { get; set; } = new Dictionary<string, Vector4>();
+
+    //public Dictionary<string, Matrix4x4> MatrixDatas { get; set; } = new Dictionary<string, Matrix4x4>();
+}
 
 public class FGL : MonoBehaviour
 {
@@ -42,7 +56,8 @@ public class FGL : MonoBehaviour
 
     private int shaderID;
     private int currentShaderID;
-    private Dictionary<int, ShaderBase> shaders = new Dictionary<int, ShaderBase>();
+    private Dictionary<int, ShaderVertexBase> vertexShaders = new Dictionary<int, ShaderVertexBase>();
+    private Dictionary<int, ShaderFragmentBase> fragmentShaders = new Dictionary<int, ShaderFragmentBase>();
 
     private int vboID;
     private int currentVBOID;
@@ -59,11 +74,16 @@ public class FGL : MonoBehaviour
     /// </summary>
     /// <param name="shader"></param>
     /// <returns></returns>
-    public int CreateShader(ShaderBase shader)
+    public int CreateShader(ShaderVertexBase vertexShader, ShaderFragmentBase fragmentShader)
     {
-        shader.ID = shaderID++;
-        shaders.Add(shader.ID, shader);
-        return shader.ID;
+        int id = shaderID++;
+
+        vertexShader.ID = id;
+        fragmentShader.ID = id;
+        vertexShaders.Add(vertexShader.ID, vertexShader);
+        fragmentShaders.Add(fragmentShader.ID, fragmentShader);
+
+        return id;
     }
 
     /// <summary>
@@ -71,7 +91,8 @@ public class FGL : MonoBehaviour
     /// </summary>
     public void ClearShader()
     {
-        this.shaders.Clear();
+        this.vertexShaders.Clear();
+        this.fragmentShaders.Clear();
     }
 
     /// <summary>
@@ -82,7 +103,7 @@ public class FGL : MonoBehaviour
     {
         VertexBufferObject vbo = new VertexBufferObject();
         vbo.ID = vboID++;
-        this.vbos.Add(vbo.ID, vbo );
+        this.vbos.Add(vbo.ID, vbo);
         return vbo.ID;
     }
 
@@ -111,7 +132,7 @@ public class FGL : MonoBehaviour
         {
             case GLBind.GL_ARRAY_BUFFER:
                 if (!this.vbos.ContainsKey(currentVBOID))
-                    throw new Exception("unknown vboId bind:" + bind +" currentid:" + currentVBOID );
+                    throw new Exception("unknown vboId bind:" + bind + " currentid:" + currentVBOID);
 
                 VertexBufferObject vbo = this.vbos[currentVBOID];
                 vbo.SetBuffers(buffers);
@@ -124,9 +145,6 @@ public class FGL : MonoBehaviour
 
     /// <summary>
     /// define how to parse data.
-    /// Note that now we only set properties in vertex shaders through this interface
-    /// Other data that needs to be interpolated, such as color, is set by matrix use SetMatrix interface
-    /// The reason we do this is because we traversed the triangle first, and the data in shader is the data of the last vertex after the triangle traversed
     /// </summary>
     /// <param name="index"></param>
     /// <param name="size"></param>
@@ -158,15 +176,23 @@ public class FGL : MonoBehaviour
     /// <param name="matrix"></param>
     public void SetMatrix(string name, Matrix4x4 matrix)
     {
-        if (!this.shaders.ContainsKey(currentShaderID))
+        if (!this.vertexShaders.ContainsKey(currentShaderID))
             return;
 
-        ShaderBase shader = this.shaders[currentShaderID];
-         FieldInfo field = shader.GetType().GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        if (null == field || field.FieldType != typeof(Matrix4x4))
-            return;
+        ShaderVertexBase vertexShader = this.vertexShaders[currentShaderID];
+        FieldInfo field = vertexShader.GetType().GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        if (null != field && field.FieldType == typeof(Matrix4x4))
+        {
+            field.SetValue(vertexShader, matrix);
+        }
 
-        field.SetValue(shader, matrix);
+        ShaderFragmentBase fragmentShader = this.fragmentShaders[currentShaderID];
+        field = fragmentShader.GetType().GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        if (null != field && field.FieldType == typeof(Matrix4x4))
+        {
+            field.SetValue(fragmentShader, matrix);
+        }
+
     }
 
     public int GetScreenResolution()
@@ -197,35 +223,71 @@ public class FGL : MonoBehaviour
     /// <summary>
     /// draw vertex according to current data
     /// </summary>
-    public void DrawArrays(GLDraw darw, int first, int count)
+    public void DrawArrays(GLDraw draw, int count)
     {
         //now we only take care of triangles , or you could expand to other sahpe
-
-        ShaderBase shader = shaders[currentShaderID];
-        
+        ShaderVertexBase vertexShader = this.vertexShaders[currentShaderID];
+        ShaderFragmentBase fragmentShader = this.fragmentShaders[currentShaderID];
 
         VertexBufferObject vbo = vbos[currentVBOID];
         vbo.Reset();
-        vbo.SetUpShader(shader);
+        vbo.SetUpShader(vertexShader);
 
         //now we only take care of triangles so count must be multiple of 3
-        Vector4[] vertexInfo = new Vector4[count];
-        for (int i = first; i < count; i++)
+        int triangleNumber = count / 3;
+        ShaderLinkData[] linkData = new ShaderLinkData[triangleNumber];
+
+        ShaderLinkData triangleData = null;
+        int linkIndex = 0;
+        for (int i = 0; i < count; i++)
         {
+            int localIndex = i % 3;
+            if (localIndex == 0)
+            {
+                triangleData = new ShaderLinkData();
+            }
+
             vbo.AnalysisVertexBuffer();
-            vertexInfo[i] = shader.Vertex();
+
+            triangleData.GLPosition[localIndex] =  vertexShader.Vertex();
+
+            FieldInfo[] fields = vertexShader.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (var f in fields)
+            {
+                Attribute attr = Attribute.GetCustomAttribute(f, typeof(V2FAttribute));
+                if (null == attr)
+                    continue;
+
+                if (f.FieldType == typeof(float))
+                {
+                    if (!triangleData.Floats.ContainsKey(f.Name))
+                        triangleData.Floats[f.Name] = new float[3];
+
+                    triangleData.Floats[f.Name][localIndex] = (float)f.GetValue(vertexShader);
+                }
+                else if (f.FieldType == typeof(Vector3))
+                {
+                    if (!triangleData.Vector3Datas.ContainsKey(f.Name))
+                        triangleData.Vector3Datas[f.Name] = new Vector3[3];
+
+                    triangleData.Vector3Datas[f.Name][localIndex] = (Vector3)f.GetValue(vertexShader);
+                }
+
+            }
+
+            if(i != 0 && (i +1) % 3 == 0)
+                linkData[linkIndex++] = triangleData;
         }
 
-        for (int i = 0; i < vertexInfo.Length; i += 3)
+        for (int i = 0; i < linkData.Length; i++)
         {
-            Vector2[] trianglePoints = new Vector2[] { vertexInfo[i], vertexInfo[i + 1], vertexInfo[ i + 2] };
-            Screen.DrawTriangle(trianglePoints, shader);
+            ShaderLinkData data = linkData[i];
+            Vector2[] trianglePoints = new Vector2[] { data.GLPosition[0], data.GLPosition[1], data.GLPosition[2] };
+            
+            Screen.DrawTriangle(trianglePoints, data, fragmentShader);
         }
 
     }
-
-
-   
 
     public List<float> GetQuadVertices()
     {
@@ -343,8 +405,9 @@ public class FGL : MonoBehaviour
     //    return datas;
     //}
 
+
     private void OnDrawGizmos()
     {
-       
+
     }
 }

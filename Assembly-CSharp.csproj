@@ -54,6 +54,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\Course\MathBasic\Scripts\ScalarAndVectorMultiplication.cs" />
+    <Compile Include="Assets\Tool\Scripts\GL\Shader\ShaderVertexBase.cs" />
     <Compile Include="Assets\Course\MathBasic\Scripts\Matrixtranspose.cs" />
     <Compile Include="Assets\Course\RenderingPipeline\Script\Combinedata.cs" />
     <Compile Include="Assets\Course\MathBasic\Scripts\VectorAddition.cs" />
@@ -66,6 +67,8 @@
     <Compile Include="Assets\Course\MathBasic\Scripts\HelloCoordinate.cs" />
     <Compile Include="Assets\Tool\Scripts\FMatrix\FMatrix.cs" />
     <Compile Include="Assets\Course\Transformation\Script\MatrixTranslation.cs" />
+    <Compile Include="Assets\Course\RenderingPipeline\Script\CompletePipeline.cs" />
+    <Compile Include="Assets\Tool\Scripts\GL\Shader\VertexLayoutAttribute.cs" />
     <Compile Include="Assets\Tool\Scripts\FGizmos\FGizmos.cs" />
     <Compile Include="Assets\Course\MathBasic\Scripts\HelloTriangle.cs" />
     <Compile Include="Assets\Course\MathBasic\Scripts\VectorMatrixMultiplication.cs" />
@@ -75,6 +78,7 @@
     <Compile Include="Assets\Course\MathBasic\Scripts\NormalizedVector.cs" />
     <Compile Include="Assets\Course\Transformation\Script\CombiningMatrices.cs" />
     <Compile Include="Assets\Tool\Scripts\GL\FGL.cs" />
+    <Compile Include="Assets\Tool\Scripts\GL\VertexBufferObject.cs" />
     <Compile Include="Assets\Course\MathBasic\Scripts\NegativeVector.cs" />
     <Compile Include="Assets\Course\MathBasic\Scripts\VectorLength.cs" />
     <Compile Include="Assets\Course\Transformation\Script\MatrixRotation.cs" />
@@ -84,11 +88,10 @@
     <Compile Include="Assets\Course\MathBasic\Scripts\HelloMatrix.cs" />
     <Compile Include="Assets\Course\MathBasic\Scripts\VectorCrossProduct.cs" />
     <Compile Include="Assets\Course\RenderingPipeline\Script\BarycentricCoordinates.cs" />
-    <Compile Include="Assets\Tool\Scripts\GL\VertexBufferObject.cs" />
-    <Compile Include="Assets\Tool\Scripts\GL\Shader\ShaderBase.cs" />
-    <Compile Include="Assets\Tool\Scripts\GL\Shader\VertexLayoutAttribute.cs" />
-    <Compile Include="Assets\Tool\Scripts\GL\Shader\TestShader.cs" />
-    <Compile Include="Assets\Course\RenderingPipeline\Script\CompletePipeline.cs" />
+    <Compile Include="Assets\Tool\Scripts\GL\Shader\ShaderFragmentBase.cs" />
+    <Compile Include="Assets\Tool\Scripts\GL\Shader\TestVertexShader.cs" />
+    <Compile Include="Assets\Tool\Scripts\GL\Shader\TestFragmentShader.cs" />
+    <Compile Include="Assets\Tool\Scripts\GL\Shader\V2FAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

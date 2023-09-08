@@ -40,11 +40,16 @@ public class CompletePipeline : MonoBehaviour
 
     public FGL GL;
 
+    [Header("Control")]
+
+    public bool DrawWorldCoordinate = true;
+
     
 
     private void OnDrawGizmos()
     {
-        FGizmos.DrawLHCoordinate(Vector3.zero);
+        if(DrawWorldCoordinate)
+            FGizmos.DrawLHCoordinate(Vector3.zero);
 
         if (null == VirtualCamera || null == CopyCamera)
             return;
@@ -92,6 +97,24 @@ public class CompletePipeline : MonoBehaviour
         triangleCenter = (t0 + t1 + t2) / 3;
         Gizmos.DrawSphere(triangleCenter, 0.1f);
 
+        //draw normalized cube
+        Gizmos.color = Color.magenta;
+        FGizmos.DrawNormalizedCube();
+
+        Matrix4x4 perspectiveMatrix = FMatrix.Perspective(Left, Right, Bottom,Top,  -ZNear, -ZFar);
+        Vector4 clipv0 = perspectiveMatrix * new Vector4(t0.x, t0.y, t0.z, 1);
+        Vector4 clipv1 = perspectiveMatrix * new Vector4(t1.x, t1.y, t1.z, 1);
+        Vector4 clipv2 = perspectiveMatrix * new Vector4(t2.x, t2.y, t2.z, 1);
+        //perspective division
+        Vector3 ndcv0 = new Vector3(clipv0.x / clipv0.w, clipv0.y / clipv0.w, clipv0.z /clipv0.w);
+        Vector3 ndcv1 = new Vector3(clipv1.x / clipv1.w, clipv1.y / clipv1.w, clipv1.z / clipv1.w);
+        Vector3 ndcv2 = new Vector3(clipv2.x / clipv2.w, clipv2.y / clipv2.w, clipv2.z / clipv2.w);
+
+        //draw ndc triangle
+        FGizmos.DrawWirePolygonWithSphere(new Vector3[] { ndcv0, ndcv1, ndcv2}, new Color[] { C0, C1, C2},Color.green);
+
+        int resolution = GL.GetScreenResolution();
+        Matrix4x4 viewportMatrix = FMatrix.ViewPort(0, resolution - 1, 0, resolution - 1);
     }
 
 
