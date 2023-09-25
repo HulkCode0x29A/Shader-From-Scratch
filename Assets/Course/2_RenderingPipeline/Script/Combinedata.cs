@@ -30,13 +30,6 @@ public class Combinedata : MonoBehaviour
         GL.VertexAttribPointer(0, 3, 6, 0);
         GL.VertexAttribPointer(1, 3, 6, 3);
 
-
-        Matrix4x4 colorMatrix = Matrix4x4.identity;
-        colorMatrix.SetRow(0, new Vector4(1,0,0,0));
-        colorMatrix.SetRow(1, new Vector4(0,1,0,0));
-        colorMatrix.SetRow(2, new Vector4(0,0,1,0));
-
-
         //first use shader
         GL.UseProgram(shaderID);
         //set viewport 

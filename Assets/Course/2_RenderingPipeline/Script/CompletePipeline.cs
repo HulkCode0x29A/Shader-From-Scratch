@@ -40,15 +40,45 @@ public class CompletePipeline : MonoBehaviour
 
     public FGL GL;
 
+    int shaderID;
+
+    int vboID;
+
     [Header("Control")]
 
     public bool DrawWorldCoordinate = true;
 
-    
+    [Header("Debug")]
+
+    public Vector3 D0;
+
+    public Vector3 D1;
+
+    public Vector3 D2;
+
+    void Start()
+    {
+        TestVertexShader vertexShader = new TestVertexShader();
+        TestFragmentShader fragmentShader = new TestFragmentShader();
+
+        shaderID = GL.CreateShader(vertexShader, fragmentShader);
+        vboID = GL.GenBuffers();
+        GL.BindBuffer(GLBind.GL_ARRAY_BUFFER, vboID);
+
+        GL.VertexAttribPointer(0, 3, 6, 0);
+        GL.VertexAttribPointer(1, 3, 6, 3);
+
+        //first use shader
+        GL.UseProgram(shaderID);
+        //set viewport 
+        int resolution = GL.GetScreenResolution();
+        Matrix4x4 matrix = FMatrix.ViewPort(0, resolution - 1, 0, resolution - 1);
+        GL.SetMatrix("ViewPort", matrix);
+    }
 
     private void OnDrawGizmos()
     {
-        if(DrawWorldCoordinate)
+        if (DrawWorldCoordinate)
             FGizmos.DrawLHCoordinate(Vector3.zero);
 
         if (null == VirtualCamera || null == CopyCamera)
@@ -101,20 +131,39 @@ public class CompletePipeline : MonoBehaviour
         Gizmos.color = Color.magenta;
         FGizmos.DrawNormalizedCube();
 
-        Matrix4x4 perspectiveMatrix = FMatrix.Perspective(Left, Right, Bottom,Top,  -ZNear, -ZFar);
+        Matrix4x4 perspectiveMatrix = FMatrix.Perspective(Left, Right, Bottom, Top, -ZNear, -ZFar);
         Vector4 clipv0 = perspectiveMatrix * new Vector4(t0.x, t0.y, t0.z, 1);
         Vector4 clipv1 = perspectiveMatrix * new Vector4(t1.x, t1.y, t1.z, 1);
         Vector4 clipv2 = perspectiveMatrix * new Vector4(t2.x, t2.y, t2.z, 1);
         //perspective division
-        Vector3 ndcv0 = new Vector3(clipv0.x / clipv0.w, clipv0.y / clipv0.w, clipv0.z /clipv0.w);
+        Vector3 ndcv0 = new Vector3(clipv0.x / clipv0.w, clipv0.y / clipv0.w, clipv0.z / clipv0.w);
         Vector3 ndcv1 = new Vector3(clipv1.x / clipv1.w, clipv1.y / clipv1.w, clipv1.z / clipv1.w);
         Vector3 ndcv2 = new Vector3(clipv2.x / clipv2.w, clipv2.y / clipv2.w, clipv2.z / clipv2.w);
 
         //draw ndc triangle
-        FGizmos.DrawWirePolygonWithSphere(new Vector3[] { ndcv0, ndcv1, ndcv2}, new Color[] { C0, C1, C2},Color.green);
+        FGizmos.DrawWirePolygonWithSphere(new Vector3[] { ndcv0, ndcv1, ndcv2 }, new Color[] { C0, C1, C2 }, Color.green);
 
-        int resolution = GL.GetScreenResolution();
-        Matrix4x4 viewportMatrix = FMatrix.ViewPort(0, resolution - 1, 0, resolution - 1);
+        D0 = ndcv0;
+        D1 = ndcv1;
+        D2 = ndcv2;
+
+        if (!Application.isPlaying)
+            return;
+
+        GL.Clear();
+        GL.UseProgram(shaderID);
+        GL.BindBuffer(GLBind.GL_ARRAY_BUFFER, vboID);
+
+        GL.BufferData(GLBind.GL_ARRAY_BUFFER, new List<float>() {
+            ndcv0.x, ndcv0.y,ndcv0.z,    C0.r, C0.g, C0.b,
+            ndcv1.x, ndcv1.y,ndcv1.z,    C1.r, C1.g, C1.b,
+            ndcv2.x, ndcv2.y,ndcv2.z,    C2.r, C2.g, C2.b,
+        });
+
+        GL.BindBuffer(GLBind.GL_ARRAY_BUFFER, vboID);
+        GL.DrawArrays(GLDraw.GL_TRIANGLES, 3);
+
+
     }
 
 

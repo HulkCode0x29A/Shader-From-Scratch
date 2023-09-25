@@ -49,7 +49,7 @@ public static class FMatrix
 
     }
 
-    public static Matrix4x4 Sclaing(Vector3 scale)
+    public static Matrix4x4 Scaling(Vector3 scale)
     {
         Matrix4x4 matrix = Matrix4x4.identity;
         matrix[0, 0] = scale.x;

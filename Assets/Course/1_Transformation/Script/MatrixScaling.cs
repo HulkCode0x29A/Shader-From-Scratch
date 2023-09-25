@@ -19,7 +19,7 @@ public class MatrixScaling : MonoBehaviour
         Gizmos.color = Color.red;
         FGizmos.DrawWireTriangle(P1, P2, P3);
 
-        Matrix4x4 matrix = FMatrix.Sclaing(Scale);
+        Matrix4x4 matrix = FMatrix.Scaling(Scale);
 
         Gizmos.color = Color.green;
         Vector3 t1 = matrix.MultiplyPoint(P1);

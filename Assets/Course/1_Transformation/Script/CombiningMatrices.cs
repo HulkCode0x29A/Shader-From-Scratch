@@ -23,7 +23,7 @@ public class CombiningMatrices : MonoBehaviour
         Vector3[] cubePoints = FGizmos.GetCubePoints(CubeCenter, CubeSize);
         FGizmos.DrawWireCube(cubePoints);
 
-        Matrix4x4 scaleMatrix = FMatrix.Sclaing(Scaling);
+        Matrix4x4 scaleMatrix = FMatrix.Scaling(Scaling);
         Matrix4x4 transMatrix = FMatrix.Translation(Translation);
         Matrix4x4 rotateX = FMatrix.RoateX(Rotate.x);
         Matrix4x4 rotateY = FMatrix.RoateY(Rotate.y);
