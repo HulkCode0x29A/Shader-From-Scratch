@@ -99,7 +99,23 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Course\3_ShaderBasic\Shader\DiffuseVertex.shader" />
+    <None Include="Assets\Course\3_ShaderBasic\Shader\HalfLambert.shader" />
+    <None Include="Assets\Course\3_ShaderBasic\Shader\DiffusePixel.shader" />
+    <None Include="Assets\Course\5_Transparency\Shader\AlphaBlend.shader" />
+    <None Include="Assets\Course\3_ShaderBasic\Shader\SpecularPixel.shader" />
+    <None Include="Assets\Course\4_Texture\Shader\NormalMapWorldSpace.shader" />
+    <None Include="Assets\Course\4_Texture\Shader\NormalMapTangentSpace.shader" />
+    <None Include="Assets\Course\5_Transparency\Shader\AlphaTest.shader" />
+    <None Include="Assets\Course\4_Texture\Shader\RampTexture.shader" />
+    <None Include="Assets\Course\5_Transparency\Shader\AlphaTestBothSide.shader" />
     <None Include="Assets\Course\3_ShaderBasic\Shader\SimpleShader.shader" />
+    <None Include="Assets\Course\4_Texture\Shader\SingleTexture.shader" />
+    <None Include="Assets\Course\5_Transparency\Shader\AlphaBlendZWrite.shader" />
+    <None Include="Assets\Course\3_ShaderBasic\Shader\BlinnPhong.shader" />
+    <None Include="Assets\Course\3_ShaderBasic\Shader\BlinnPhongUseFunction.shader" />
+    <None Include="Assets\Course\3_ShaderBasic\Shader\SpecularVertex.shader" />
+    <None Include="Assets\Course\4_Texture\Shader\MaskTexture.shader" />
+    <None Include="Assets\Course\5_Transparency\Shader\AlphaBlendBothSIde.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

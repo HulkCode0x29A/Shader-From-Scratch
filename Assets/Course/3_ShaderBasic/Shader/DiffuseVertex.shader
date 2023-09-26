@@ -50,6 +50,7 @@ Shader "ShaderBasic/DiffuseVertex"
                 fixed3 worldLight = normalize(_WorldSpaceLightPos0);
 
                 //https://docs.unity3d.com/2020.3/Documentation/Manual/SL-UnityShaderVariables.html
+                //https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-saturate
                 fixed3 diffuse = _LightColor0.rgb * _Diffuse.rgb * saturate(dot(worldNormal, worldLight));
 
                 o.color = ambient + diffuse;
@@ -63,4 +64,6 @@ Shader "ShaderBasic/DiffuseVertex"
             ENDCG
         }
     }
+
+    Fallback "Diffuse"
 }
