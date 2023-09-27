@@ -96,26 +96,41 @@
     <Compile Include="Assets\Course\0_MathBasic\Scripts\VectorCrossProduct.cs" />
     <Compile Include="Assets\Course\2_RenderingPipeline\Script\BarycentricCoordinates.cs" />
     <Compile Include="Assets\Course\2_RenderingPipeline\Script\UsingShaderPipleline.cs" />
+    <Compile Include="Assets\Course\7_AdvancedTexture\Script\ProceduralTextureGeneration.cs" />
+    <Compile Include="Assets\Course\7_AdvancedTexture\Script\SetPropertyAttribute.cs" />
+    <Compile Include="Assets\Course\7_AdvancedTexture\Script\RenderCubemapWizard.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Course\3_ShaderBasic\Shader\DiffuseVertex.shader" />
     <None Include="Assets\Course\3_ShaderBasic\Shader\HalfLambert.shader" />
     <None Include="Assets\Course\3_ShaderBasic\Shader\DiffusePixel.shader" />
+    <None Include="Assets\Course\7_AdvancedTexture\Shader\GlassRefraction.shader" />
+    <None Include="Assets\Course\7_AdvancedTexture\Shader\Refraction.shader" />
+    <None Include="Assets\Course\6_AdvancedLighting\Shader\AlphaBlendWithShadow.shader" />
     <None Include="Assets\Course\5_Transparency\Shader\AlphaBlend.shader" />
     <None Include="Assets\Course\3_ShaderBasic\Shader\SpecularPixel.shader" />
+    <None Include="Assets\Course\7_AdvancedTexture\Shader\Reflection.shader" />
     <None Include="Assets\Course\4_Texture\Shader\NormalMapWorldSpace.shader" />
     <None Include="Assets\Course\4_Texture\Shader\NormalMapTangentSpace.shader" />
+    <None Include="Assets\Course\6_AdvancedLighting\Shader\ForwardRendering.shader" />
+    <None Include="Assets\Course\6_AdvancedLighting\Shader\AttenuationAndShadowFunction.shader" />
     <None Include="Assets\Course\5_Transparency\Shader\AlphaTest.shader" />
+    <None Include="Assets\Course\Shader\Common\BumpedDiffuse.shader" />
     <None Include="Assets\Course\4_Texture\Shader\RampTexture.shader" />
     <None Include="Assets\Course\5_Transparency\Shader\AlphaTestBothSide.shader" />
     <None Include="Assets\Course\3_ShaderBasic\Shader\SimpleShader.shader" />
     <None Include="Assets\Course\4_Texture\Shader\SingleTexture.shader" />
+    <None Include="Assets\Course\6_AdvancedLighting\Shader\Shadow.shader" />
     <None Include="Assets\Course\5_Transparency\Shader\AlphaBlendZWrite.shader" />
     <None Include="Assets\Course\3_ShaderBasic\Shader\BlinnPhong.shader" />
     <None Include="Assets\Course\3_ShaderBasic\Shader\BlinnPhongUseFunction.shader" />
+    <None Include="Assets\Course\7_AdvancedTexture\Shader\Fresnel.shader" />
+    <None Include="Assets\Course\Shader\Common\BumpedSpecular.shader" />
     <None Include="Assets\Course\3_ShaderBasic\Shader\SpecularVertex.shader" />
     <None Include="Assets\Course\4_Texture\Shader\MaskTexture.shader" />
-    <None Include="Assets\Course\5_Transparency\Shader\AlphaBlendBothSIde.shader" />
+    <None Include="Assets\Course\5_Transparency\Shader\AlphaBlendBothSide.shader" />
+    <None Include="Assets\Course\7_AdvancedTexture\Shader\Mirror.shader" />
+    <None Include="Assets\Course\6_AdvancedLighting\Shader\AlphaTestWithShadow.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
